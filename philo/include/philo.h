@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 14:50:45 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/02/17 20:02:25 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/02/17 20:28:01 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ typedef struct s_philo_data
 
 t_node	*create_fork_circle(int n_philo);
 
-void	*philo_behaviour(t_philo_data *philo_data);
+void	*philo_behaviour(void *philo_data);
 
 void	cleanse_list(t_node **list);
 
