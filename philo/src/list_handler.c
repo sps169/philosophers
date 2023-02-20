@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 15:02:53 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/02/17 18:57:09 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/02/20 13:20:42 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,6 @@ void	cleanse_list(t_node **list)
 	t_node			*aux;
 	unsigned int	curr_id;
 
-	printf("Cleanse start\n");
 	curr_id = -1;
 	aux = NULL;
 	while(*list != NULL && (*list)->next != NULL && (*list)->next->id != 1)
