@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 14:43:10 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/02/20 13:20:52 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/02/21 18:16:18 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,24 @@ static void	free_philos(t_philo_data **philos, int last_philo)
 	while(i <= last_philo)
 	{
 		free(philos[i]);
+		printf("Philo at position %i freed.\n", i);
 		i++;
 	}
+}
+
+static void	wait_and_free(t_node **forks, t_philo_data **philos, int last_philo)
+{
+	int	j;
+	
+	j = 0;
+	while (j <= last_philo)
+	{
+		if (philos[j] != NULL)
+			pthread_join(philos[j]->thread, NULL);
+		j++;
+	}
+	cleanse_list(forks);
+	free_philos(philos, last_philo);
 }
 
 static int	start_philo(t_params params)
@@ -48,7 +64,6 @@ static int	start_philo(t_params params)
 	t_node			*forks;
 	t_philo_data	*philos[200];
 	unsigned int	i;
-	unsigned int	j;
 
 	forks = create_fork_circle(params.n_philo);
 	if (forks == NULL)
@@ -63,19 +78,12 @@ static int	start_philo(t_params params)
 		philos[i - 1] = init_philosopher(i, params, forks);
 		if (philos[i - 1] == NULL)
 		{
-			free_philos(philos, i - 2);
+			wait_and_free(&forks, philos, i - 2);
 			return (-1);
 		}
 		i++;
 	}
-	j = 0;
-	while (j < params.n_philo)
-	{
-		if (philos[j] != NULL)
-			pthread_join(philos[j]->thread, NULL);
-		j++;
-	}
-	free_philos(philos, params.n_philo - 1);
+	wait_and_free(&forks, philos, i - 2);
 	return (0);
 }
 
@@ -83,13 +91,14 @@ int	main(int argc, char *argv[])
 {
 	t_params	params;
 
+	// atexit(leaks);
 	(void)argc;
 	(void)argv;
-	params.n_philo = 2;
+	params.n_philo = 101;
 	params.t_die = 200;
 	params.t_sleep = 50;
 	params.t_eat = 50;
-	params.n_meals = 1;
+	params.n_meals = 100;
 	start_philo(params);
 	return (0);
 }

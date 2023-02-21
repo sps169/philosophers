@@ -20,9 +20,10 @@ THREADS_LIB = -lpthread
 
 CC = gcc
 
+RACE_CHECK = -fsanitize=thread
+
 $(NAME): $(OBJS)
 	$(CC) $(CFLAGS) $(INCLUDE) $(OBJS) -o $(NAME)
-
 
 all: $(NAME)
 
