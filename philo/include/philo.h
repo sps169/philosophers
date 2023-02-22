@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 14:50:45 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/02/21 18:07:26 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/02/22 12:19:25 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,9 @@ typedef struct	s_params
 	unsigned int	t_eat;
 	unsigned int	n_meals;
 	struct timeval	t_start;
+	unsigned int	death;
+	pthread_mutex_t	death_lock;
+	pthread_mutex_t	print_lock;
 } t_params;
 
 typedef struct s_philo_data
@@ -44,7 +47,7 @@ typedef struct s_philo_data
 	struct timeval	last_meal;
 	pthread_t		thread;
 	struct s_node	*forks;
-	struct s_params	params;
+	struct s_params	*params;
 } t_philo_data;
 
 
@@ -53,6 +56,12 @@ t_node	*create_fork_circle(int n_philo);
 void	*philo_behaviour(void *philo_data);
 
 int		time_diff(struct timeval *start, struct timeval *end);
+
+void	free_philos(t_philo_data **philos, int last_philo);
+
+void	wait_and_free(t_node **forks, t_philo_data **philos, int last_philo);
+
+void	clean_params(t_params **params);
 
 void	cleanse_list(t_node **list);
 
