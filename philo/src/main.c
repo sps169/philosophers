@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 14:43:10 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/02/22 13:16:42 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/02/22 15:43:20 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,17 +44,19 @@ static int	start_philo(t_params *params)
 		return (-1);
 	}
 	i = 1;
-	gettimeofday(&(params->t_start), NULL);
 	while (i <= params->n_philo)
 	{
 		philos[i - 1] = init_philosopher(i, params, forks);
 		if (philos[i - 1] == NULL)
 		{
+			params->kick_off = -1;
 			wait_and_free(&forks, philos, i - 2);
 			return (-1);
 		}
 		i++;
 	}
+	gettimeofday(&(params->t_start), NULL);
+	params->kick_off = 1;
 	wait_and_free(&forks, philos, i - 2);
 	return (0);
 }
@@ -66,12 +68,13 @@ static t_params *init_params()
 	params = malloc(sizeof(t_params));
 	if (params == NULL)
 		return (NULL);
-	params->n_philo = 101;
+	params->n_philo = 5;
 	params->t_die = 200;
 	params->t_sleep = 50;
 	params->t_eat = 50;
-	params->n_meals = 100;
+	params->n_meals = 2;
 	params->death = 0;
+	params->kick_off = 0;
 	if (pthread_mutex_init(&(params->death_lock), NULL) != 0)
 	{
 		free(params);
