@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 14:43:10 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/02/22 15:43:20 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/02/23 13:30:26 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,25 @@ static t_philo_data	*init_philosopher(int id, t_params *params, t_node *forks)
 	data->id = id;
 	pthread_create(&(data->thread), NULL, &philo_behaviour, (void *)(data));
 	return (data);
+}
+
+static void	blocked_death_check_loop(t_philo_data **philos, t_params *params)
+{
+	unsigned int	j;
+	struct timeval	curr_time;
+
+	while (check_death(params) == 0)
+	{
+		j = 0;
+		while (philos[j] != NULL && check_death(params) == 0)
+		{
+			gettimeofday(&curr_time, NULL);
+			if (philos[j]->is_block && time_diff(&philos[j]->time_block, &curr_time) > philos[j]->time_left)
+			{
+				die(philos[j], 1);
+			}
+		}
+	}
 }
 
 static int	start_philo(t_params *params)
@@ -57,6 +76,7 @@ static int	start_philo(t_params *params)
 	}
 	gettimeofday(&(params->t_start), NULL);
 	params->kick_off = 1;
+	blocked_death_check_loop(philos, params);
 	wait_and_free(&forks, philos, i - 2);
 	return (0);
 }
@@ -71,8 +91,8 @@ static t_params *init_params()
 	params->n_philo = 5;
 	params->t_die = 200;
 	params->t_sleep = 50;
-	params->t_eat = 50;
-	params->n_meals = 2;
+	params->t_eat = 150;
+	params->n_meals = 10;
 	params->death = 0;
 	params->kick_off = 0;
 	if (pthread_mutex_init(&(params->death_lock), NULL) != 0)

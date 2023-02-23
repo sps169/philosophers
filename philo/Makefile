@@ -24,7 +24,7 @@ CC = gcc
 RACE_CHECK = -fsanitize=thread
 
 $(NAME): $(OBJS)
-	$(CC) $(CFLAGS) $(INCLUDE) $(OBJS) -o $(NAME)
+	$(CC) $(CFLAGS) $(RACE_CHECK) $(INCLUDE) $(OBJS) -o $(NAME)
 
 all: $(NAME)
 

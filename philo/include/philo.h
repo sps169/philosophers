@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 14:50:45 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/02/22 15:44:04 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/02/23 13:25:15 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ typedef struct	s_params
 	unsigned int	death;
 	pthread_mutex_t	death_lock;
 	pthread_mutex_t	print_lock;
-	int	kick_off;
+	int				kick_off;
 } t_params;
 
 typedef struct s_philo_data
@@ -58,6 +58,10 @@ typedef struct s_philo_data
 t_node	*create_fork_circle(int n_philo);
 
 void	*philo_behaviour(void *philo_data);
+
+void	die(t_philo_data *data, int result);
+
+int	check_death(t_params *params);
 
 int		time_diff(struct timeval *start, struct timeval *end);
 
