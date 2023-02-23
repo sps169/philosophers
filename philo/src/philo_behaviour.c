@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 19:12:39 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/02/23 13:38:11 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/02/23 16:40:02 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,11 @@ static void	print_update(t_philo_data *data, char print_type)
 	struct timeval	 curr_time;
 	int				timediff;
 
-	gettimeofday(&curr_time, NULL);
-	timediff = time_diff(&data->params->t_start, &curr_time);
-	// pthread_mutex_lock(&data->params->print_lock);
-	// if (check_death(data->params) == 0 || print_type == 'd')
-	// {
+	pthread_mutex_lock(&data->params->print_lock);
+	if (check_death(data->params) == 0 || print_type == 'd')
+	{
+		gettimeofday(&curr_time, NULL);
+		timediff = time_diff(&data->params->t_start, &curr_time);
 		if (print_type == 'e')
 			printf("%d ms: %u is eating\n", timediff, data->id);
 		else if (print_type == 's')
@@ -34,8 +34,8 @@ static void	print_update(t_philo_data *data, char print_type)
 			printf("%d ms: %u has taken a fork (right)\n", timediff, data->id);
 		else if (print_type == 'd')
 			printf("%d ms: %u died\n", timediff, data->id);
-	// }
-	// pthread_mutex_unlock(&data->params->print_lock);
+	}
+	pthread_mutex_unlock(&data->params->print_lock);
 }
 
 static void	real_sleep(int m_sec)
@@ -134,21 +134,15 @@ void	*philo_behaviour(void *data)
 											 &philo_data->time_block);
 		philo_data->is_block = 1;
 		pthread_mutex_lock(&(l_fork->fork));
-		if (check_death(philo_data->params) == 1)
-			return (NULL);
 		print_update(philo_data, 'l');
 		pthread_mutex_lock(&(r_fork->fork));
 		philo_data->is_block = 0;
-		if (check_death(philo_data->params) == 1)
-			return (NULL);
 		print_update(philo_data, 'r');
 		gettimeofday(&(philo_data->last_meal), NULL);
+		print_update(philo_data, 'e');
 		is_dead = sleep_or_die(philo_data->params->t_eat, philo_data);
 		pthread_mutex_unlock(&(l_fork->fork));
 		pthread_mutex_unlock(&(r_fork->fork));
-		if (is_dead == 1)
-			return (NULL);
-		print_update(philo_data, 'e');
 		n_meals++;
 		print_update(philo_data, 's');
 		if (sleep_or_die(philo_data->params->t_sleep, philo_data) == 1)

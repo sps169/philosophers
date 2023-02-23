@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 14:43:10 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/02/23 13:30:26 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/02/23 17:15:18 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,7 @@ static void	blocked_death_check_loop(t_philo_data **philos, t_params *params)
 		{
 			gettimeofday(&curr_time, NULL);
 			if (philos[j]->is_block && time_diff(&philos[j]->time_block, &curr_time) > philos[j]->time_left)
-			{
 				die(philos[j], 1);
-			}
 		}
 	}
 }
@@ -88,16 +86,22 @@ static t_params *init_params()
 	params = malloc(sizeof(t_params));
 	if (params == NULL)
 		return (NULL);
-	params->n_philo = 5;
+	params->n_philo = 16;
 	params->t_die = 200;
-	params->t_sleep = 50;
-	params->t_eat = 150;
-	params->n_meals = 10;
+	params->t_sleep = 100;
+	params->t_eat = 100;
+	params->n_meals = 100;
 	params->death = 0;
 	params->kick_off = 0;
 	if (pthread_mutex_init(&(params->death_lock), NULL) != 0)
 	{
 		free(params);
+		return (NULL);
+	}
+	if (pthread_mutex_init(&params->print_lock, NULL) != 0)
+	{
+		free(params);
+		pthread_mutex_destroy(&params->death_lock);
 		return (NULL);
 	}
 	return (params);
