@@ -5,7 +5,7 @@ SRC_DIR = ./src/
 SRC = 	$(SRC_DIR)main.c				\
 		$(SRC_DIR)list_handler.c		\
 		$(SRC_DIR)philo_behaviour.c		\
-		$(SRC_DIR)time_measurement.c	\
+		$(SRC_DIR)utils.c				\
 		$(SRC_DIR)cleanup.c				\
 
 OBJS = $(SRC:.c=.o)

@@ -79,30 +79,33 @@ static int	start_philo(t_params *params)
 	return (0);
 }
 
-static t_params *init_params()
+static t_params *init_params(int argc, char *argv[])
 {
 	t_params *params;
 
-	params = malloc(sizeof(t_params));
-	if (params == NULL)
-		return (NULL);
-	params->n_philo = 16;
-	params->t_die = 200;
-	params->t_sleep = 100;
-	params->t_eat = 100;
-	params->n_meals = 100;
-	params->death = 0;
-	params->kick_off = 0;
-	if (pthread_mutex_init(&(params->death_lock), NULL) != 0)
+	if (argc >= 5 && argc <= 6)
 	{
-		free(params);
-		return (NULL);
-	}
-	if (pthread_mutex_init(&params->print_lock, NULL) != 0)
-	{
-		free(params);
-		pthread_mutex_destroy(&params->death_lock);
-		return (NULL);
+		params = malloc(sizeof(t_params));
+		if (params == NULL)
+			return (NULL);
+		params->n_philo = 16;
+		params->t_die = 200;
+		params->t_sleep = 100;
+		params->t_eat = 100;
+		params->n_meals = 100;
+		params->death = 0;
+		params->kick_off = 0;
+		if (pthread_mutex_init(&(params->death_lock), NULL) != 0)
+		{
+			free(params);
+			return (NULL);
+		}
+		if (pthread_mutex_init(&params->print_lock, NULL) != 0)
+		{
+			free(params);
+			pthread_mutex_destroy(&params->death_lock);
+			return (NULL);
+		}
 	}
 	return (params);
 }
@@ -112,14 +115,14 @@ int	main(int argc, char *argv[])
 	t_params	*params;
 
 	// atexit(leaks);
-	(void)argc;
-	(void)argv;
 
-	params = init_params();
+	params = init_params(argc, argv);
 	if (params != NULL)
 	{
 		start_philo(params);
 		clean_params(&params);
 	}
+	else
+		printf("Wrong params\n");
 	return (0);
 }

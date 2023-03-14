@@ -63,9 +63,7 @@ t_node	*create_fork_circle(int n_philo)
 void	cleanse_list(t_node **list)
 {
 	t_node			*aux;
-	unsigned int	curr_id;
 
-	curr_id = -1;
 	aux = NULL;
 	while(*list != NULL && (*list)->next != NULL && (*list)->next->id != 1)
 		*list = (*list)->next;
@@ -76,7 +74,6 @@ void	cleanse_list(t_node **list)
 			(*list)->next->prev = NULL;
 		if ((*list)->prev != NULL)
 			(*list)->prev->next = NULL;
-		curr_id = (*list)->id;
 		pthread_mutex_destroy(&((*list)->fork));
 		free(*list);
 		*list = aux;

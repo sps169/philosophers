@@ -98,7 +98,6 @@ void	*philo_behaviour(void *data)
 	t_node			*l_fork;
 	t_node			*r_fork;
 	unsigned int	n_meals;
-	int				is_dead;
 
 	n_meals = 0;
 	philo_data = (t_philo_data *)data;
@@ -140,7 +139,7 @@ void	*philo_behaviour(void *data)
 		print_update(philo_data, 'r');
 		gettimeofday(&(philo_data->last_meal), NULL);
 		print_update(philo_data, 'e');
-		is_dead = sleep_or_die(philo_data->params->t_eat, philo_data);
+		sleep_or_die(philo_data->params->t_eat, philo_data);
 		pthread_mutex_unlock(&(l_fork->fork));
 		pthread_mutex_unlock(&(r_fork->fork));
 		n_meals++;
