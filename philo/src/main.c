@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 14:43:10 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/02/23 17:15:18 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/04/11 20:41:29 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,65 +17,59 @@ void	leaks(void)
 	system("leaks philo");
 }
 
-static t_philo_data	*init_philosopher(int id, t_params *params, t_node *forks)
+int	create_fork(unsigned int id, pthread_mutex_t **fork)
+{
+	*fork = malloc(sizeof(pthread_mutex_t));
+	if (*fork == NULL)
+		return (-1);
+	if (pthread_mutex_init(*fork, NULL) != 0)
+	{
+		printf("[ERROR]: Node with id %u mutex initialization failed\n", id);
+		return (-1);
+	}
+	return (0);
+}
+
+t_philo_data	*create_philosopher(unsigned int id, t_params *params, t_node *prev)
 {
 	t_philo_data	*data;
 
 	data = malloc(sizeof(t_philo_data));
 	if (data == NULL)
 		return (NULL);
-	data->forks = forks;
+	if (prev != NULL)
+		data->l_fork = prev->philo_data->r_fork;
+	if (create_fork(id, &(data->r_fork)) == -1)
+	{
+		free(data);
+		return (NULL);
+	}
 	data->params = params;
 	data->id = id;
-	pthread_create(&(data->thread), NULL, &philo_behaviour, (void *)(data));
-	return (data);
-}
-
-static void	blocked_death_check_loop(t_philo_data **philos, t_params *params)
-{
-	unsigned int	j;
-	struct timeval	curr_time;
-
-	while (check_death(params) == 0)
+	data->n_meals = 0;
+	if (pthread_create(&(data->thread), NULL, &philo_behaviour, (void *)(data)) != 0)
 	{
-		j = 0;
-		while (philos[j] != NULL && check_death(params) == 0)
-		{
-			gettimeofday(&curr_time, NULL);
-			if (philos[j]->is_block && time_diff(&philos[j]->time_block, &curr_time) > philos[j]->time_left)
-				die(philos[j], 1);
-		}
+		pthread_mutex_destroy((data->r_fork));
+		printf("[ERROR]: Thread with philo_id %u initialization failed\n", data->id);
+		return (NULL);
 	}
+	return (data);
 }
 
 static int	start_philo(t_params *params)
 {
-	t_node			*forks;
-	t_philo_data	*philos[500];
-	unsigned int	i;
+	t_node	*philos;
 
-	forks = create_fork_circle(params->n_philo);
-	if (forks == NULL)
+	philos = create_circle(params);
+	if (philos == NULL)
 	{
 		printf("List creation failed\n");
+		params->kick_off = -1;
 		return (-1);
-	}
-	i = 1;
-	while (i <= params->n_philo)
-	{
-		philos[i - 1] = init_philosopher(i, params, forks);
-		if (philos[i - 1] == NULL)
-		{
-			params->kick_off = -1;
-			wait_and_free(&forks, philos, i - 2);
-			return (-1);
-		}
-		i++;
 	}
 	gettimeofday(&(params->t_start), NULL);
 	params->kick_off = 1;
-	blocked_death_check_loop(philos, params);
-	wait_and_free(&forks, philos, i - 2);
+	wait_and_free(&philos);
 	return (0);
 }
 
@@ -83,16 +77,19 @@ static t_params *init_params(int argc, char *argv[])
 {
 	t_params *params;
 
-	if (argc >= 5 && argc <= 6)
-	{
+	(void) argc;
+	(void) argv;
+
+	// if (argc >= 5 && argc <= 6)
+	// {
 		params = malloc(sizeof(t_params));
 		if (params == NULL)
 			return (NULL);
-		params->n_philo = 16;
-		params->t_die = 200;
+		params->n_philo = 50;
+		params->t_die = 1000;
 		params->t_sleep = 100;
 		params->t_eat = 100;
-		params->n_meals = 100;
+		params->n_meals = -1;
 		params->death = 0;
 		params->kick_off = 0;
 		if (pthread_mutex_init(&(params->death_lock), NULL) != 0)
@@ -106,7 +103,7 @@ static t_params *init_params(int argc, char *argv[])
 			pthread_mutex_destroy(&params->death_lock);
 			return (NULL);
 		}
-	}
+	// }
 	return (params);
 }
 

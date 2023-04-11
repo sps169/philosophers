@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 14:50:45 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/02/23 13:25:15 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/04/11 20:33:16 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,10 @@
 
 typedef struct	s_node
 {
-	unsigned int	id;
-	struct s_node	*prev;
-	struct s_node	*next;
-	pthread_mutex_t	fork;
+	unsigned int		id;
+	struct s_node		*prev;
+	struct s_node		*next;
+	struct s_philo_data	*philo_data;
 } t_node;
 
 typedef struct	s_params
@@ -46,16 +46,19 @@ typedef struct s_philo_data
 {
 	unsigned int	id;
 	struct timeval	last_meal;
-	int				is_block;
-	struct timeval	time_block;
+	unsigned int	n_meals;
 	int				time_left;
 	pthread_t		thread;
-	struct s_node	*forks;
+	pthread_mutex_t	*l_fork;
+	pthread_mutex_t	*r_fork;
 	struct s_params	*params;
+	struct s_node	*list;
 } t_philo_data;
 
 
-t_node	*create_fork_circle(int n_philo);
+t_node	*create_circle(t_params *params);
+
+t_philo_data	*create_philosopher(unsigned int id, t_params *params, t_node *prev);
 
 void	*philo_behaviour(void *philo_data);
 
@@ -65,13 +68,10 @@ int	check_death(t_params *params);
 
 int		time_diff(struct timeval *start, struct timeval *end);
 
-void	free_philos(t_philo_data **philos, int last_philo);
-
-void	wait_and_free(t_node **forks, t_philo_data **philos, int last_philo);
+void	wait_and_free(t_node **philos);
 
 void	clean_params(t_params **params);
 
 void	cleanse_list(t_node **list);
 
-void	print_list(t_node *list);
 #endif

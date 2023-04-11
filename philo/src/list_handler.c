@@ -6,13 +6,13 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 15:02:53 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/02/20 13:20:42 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/04/11 20:39:52 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static t_node	*create_node(unsigned int id, t_node *prev, t_node *next)
+static t_node	*create_node(unsigned int id, t_node *prev, t_node *next, t_params *params)
 {
 	t_node *node;
 
@@ -23,9 +23,10 @@ static t_node	*create_node(unsigned int id, t_node *prev, t_node *next)
 		return (NULL);
 	}
 	node->id = id;
-	if (pthread_mutex_init(&(node->fork), NULL) != 0)
+	node->philo_data = create_philosopher(id, params, prev);
+	if (node->philo_data == NULL)
 	{
-		printf("[ERROR]: Node with id %u mutex initialization failed\n", id);
+		free(node);
 		return (NULL);
 	}
 	node->prev = prev;
@@ -35,28 +36,32 @@ static t_node	*create_node(unsigned int id, t_node *prev, t_node *next)
 	return (node);
 }
 
-t_node	*create_fork_circle(int n_philo)
+t_node	*create_circle(t_params *params)
 {
-	int		i;
-	t_node	*list;
-	t_node	*first;
+	unsigned int	i;
+	t_node			*list;
+	t_node			*first;
 
-	if (n_philo <= 0)
+	if (params->n_philo <= 0)
 		return (NULL);
-	list = create_node(1, NULL, NULL);
+	list = create_node(1, NULL, NULL, params);
+	if (list == NULL)
+		return (NULL);
 	first = list;
 	i = 2;
-	while (i <= n_philo)
+	while (i <= params->n_philo)
 	{
-		if (create_node(i++, list, NULL) == NULL)
+		if (create_node(i++, list, NULL, params) == NULL)
 		{
 			cleanse_list(&list);
 			return (NULL);
 		}
+
 		list = list->next;
 	}
 	list->next = first;
 	first->prev = list;
+	first->philo_data->l_fork = first->prev->philo_data->r_fork;
 	return (first);
 }
 
@@ -74,32 +79,9 @@ void	cleanse_list(t_node **list)
 			(*list)->next->prev = NULL;
 		if ((*list)->prev != NULL)
 			(*list)->prev->next = NULL;
-		pthread_mutex_destroy(&((*list)->fork));
+		pthread_mutex_destroy(((*list)->philo_data->r_fork));
 		free(*list);
 		*list = aux;
 	}
 	list = NULL;
-}
-
-void	print_list(t_node *list)
-{
-	int	printed;
-
-	printed = 0;
-	while (list != NULL && printed == 0)
-	{
-		if (list->prev != NULL)
-			printf("%u", list->prev->id);
-		else
-			printf("NULL");
-		printf("<-[%u]->",list->id);
-		if (list->next != NULL)
-			printf("%u\n", list->next->id);
-		else
-			printf("NULL\n");
-		if (list->next && list->next->id != 1)
-			list = list->next;
-		else
-			printed = 1;
-	}
 }
