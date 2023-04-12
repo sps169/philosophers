@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 14:50:45 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/04/12 22:32:59 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/04/12 22:53:47 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,8 +64,6 @@ void	*philo_behaviour(void *philo_data);
 
 void	die(t_philo_data *data, int result);
 
-int	check_death(t_params *params);
-
 int		time_diff(struct timeval *start, struct timeval *end);
 
 void	wait_and_free(t_node **philos);
@@ -75,5 +73,7 @@ void	clean_params(t_params **params);
 void	cleanse_list(t_node **list);
 
 int	check_starvation(t_philo_data *data);
+
+unsigned int	atou(char *string);
 
 #endif
