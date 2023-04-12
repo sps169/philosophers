@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 14:50:45 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/04/11 20:33:16 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/04/12 13:34:21 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,5 +73,7 @@ void	wait_and_free(t_node **philos);
 void	clean_params(t_params **params);
 
 void	cleanse_list(t_node **list);
+
+int	check_starvation(t_philo_data *data);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 14:43:10 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/04/11 20:41:29 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/04/12 15:17:32 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,18 @@ t_philo_data	*create_philosopher(unsigned int id, t_params *params, t_node *prev
 	return (data);
 }
 
+static void	starve_check_loop(t_node *philos)
+{
+	usleep(1000);
+	while (check_death(philos->philo_data->params) == 0)
+	{
+		if (check_starvation(philos->philo_data) == 1)
+			die(philos->philo_data, 1);
+		philos = philos->next;
+		usleep(100000);
+	}
+}
+
 static int	start_philo(t_params *params)
 {
 	t_node	*philos;
@@ -69,6 +81,7 @@ static int	start_philo(t_params *params)
 	}
 	gettimeofday(&(params->t_start), NULL);
 	params->kick_off = 1;
+	starve_check_loop(philos);
 	wait_and_free(&philos);
 	return (0);
 }
@@ -85,11 +98,11 @@ static t_params *init_params(int argc, char *argv[])
 		params = malloc(sizeof(t_params));
 		if (params == NULL)
 			return (NULL);
-		params->n_philo = 50;
-		params->t_die = 1000;
+		params->n_philo = 10;
+		params->t_die = 100;
 		params->t_sleep = 100;
 		params->t_eat = 100;
-		params->n_meals = -1;
+		params->n_meals = 0;
 		params->death = 0;
 		params->kick_off = 0;
 		if (pthread_mutex_init(&(params->death_lock), NULL) != 0)

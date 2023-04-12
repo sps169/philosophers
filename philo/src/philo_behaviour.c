@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 19:12:39 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/04/11 20:34:51 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/04/12 15:10:11 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@ static void	print_update(t_philo_data *data, char print_type)
 	struct timeval	 curr_time;
 	int				timediff;
 
-	pthread_mutex_lock(&data->params->print_lock);
-	if (check_death(data->params) == 0 || print_type == 'd')
+	pthread_mutex_lock(&(data->params->print_lock));
+	if (data->params->death == 0 || print_type == 'd')
 	{
 		gettimeofday(&curr_time, NULL);
 		timediff = time_diff(&data->params->t_start, &curr_time);
@@ -35,7 +35,7 @@ static void	print_update(t_philo_data *data, char print_type)
 		else if (print_type == 'd')
 			printf("%d ms: %u died\n", timediff, data->id);
 	}
-	pthread_mutex_unlock(&data->params->print_lock);
+	pthread_mutex_unlock(&(data->params->print_lock));
 }
 
 static void	real_sleep(int m_sec)
@@ -62,10 +62,24 @@ int	check_death(t_params *params)
 	return (death);
 }
 
+int	check_starvation(t_philo_data *data)
+{
+	struct timeval	curr_time;
+	
+	gettimeofday(&curr_time, NULL);
+	if (time_diff(&(data->last_meal), &curr_time) >= (int)(data->params->t_die))
+	{
+		return (1);
+	}
+	else
+		return (0);
+
+}
+
 void	die(t_philo_data *data, int result)
 {
 	pthread_mutex_lock(&data->params->death_lock);
-	if (check_death(data->params) == 0)
+	if (data->params->death != 0)
 	{
 		data->params->death = result;
 		if (result == 1)
@@ -111,10 +125,12 @@ static void	update_meal_time(t_philo_data *philo_data)
 
 static void	take_forks(t_philo_data *philo_data)
 {
-	pthread_mutex_lock((philo_data->r_fork));
-	print_update(philo_data, 'r');
-	pthread_mutex_lock((philo_data->l_fork));
+	if (pthread_mutex_lock((philo_data->l_fork)) != 0)
+		printf("%i?\n", philo_data->id);
 	print_update(philo_data, 'l');
+	if (pthread_mutex_lock((philo_data->r_fork)) != 0)
+		printf("%i\n", philo_data->id);
+	print_update(philo_data, 'r');
 }
 
 static int	eat(t_philo_data *philo_data)
@@ -126,8 +142,12 @@ static int	eat(t_philo_data *philo_data)
 	print_update(philo_data, 'e');
 	is_dead = sleep_or_die(philo_data->params->t_eat, philo_data);
 	philo_data->n_meals++;
-	pthread_mutex_unlock((philo_data->r_fork));
-	pthread_mutex_unlock((philo_data->l_fork));
+	if (!is_dead)
+		print_update(philo_data, 's');
+	if (pthread_mutex_unlock((philo_data->l_fork)) != 0)
+		printf("%i\n", philo_data->id);
+	if (pthread_mutex_unlock((philo_data->r_fork)) != 0)
+		printf("%i\n", philo_data->id);
 	return (is_dead);
 }
 
@@ -136,7 +156,8 @@ void	*philo_behaviour(void *data)
 	t_philo_data	*philo_data;
 
 	philo_data = (t_philo_data *)data;
-	wait_start(philo_data->params);
+	if (wait_start(philo_data->params) == -1)
+		return (NULL);
 	update_meal_time(philo_data);
 	if (philo_data->id % 2 != 0)
 		usleep(1000);
@@ -147,7 +168,6 @@ void	*philo_behaviour(void *data)
 		take_forks(philo_data);
 		if (eat(philo_data) != 0)
 			return (NULL);
-		print_update(philo_data, 's');
 		if (sleep_or_die(philo_data->params->t_sleep, philo_data) == 1)
 			return (NULL);
 		print_update(philo_data, 't');
