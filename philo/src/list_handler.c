@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 15:02:53 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/04/12 15:17:11 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/04/12 22:20:44 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,6 @@ t_node	*create_circle(t_params *params)
 			cleanse_list(&list);
 			return (NULL);
 		}
-
 		list = list->next;
 	}
 	list->next = first;
@@ -80,6 +79,8 @@ void	cleanse_list(t_node **list)
 		if ((*list)->prev != NULL)
 			(*list)->prev->next = NULL;
 		pthread_mutex_destroy(((*list)->philo_data->r_fork));
+		free((*list)->philo_data->r_fork);
+		free((*list)->philo_data);
 		free(*list);
 		*list = aux;
 	}

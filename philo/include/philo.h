@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 14:50:45 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/04/12 13:34:21 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/04/12 22:32:59 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,24 +35,24 @@ typedef struct	s_params
 	unsigned int	t_sleep;
 	unsigned int	t_eat;
 	unsigned int	n_meals;
-	struct timeval	t_start;
 	unsigned int	death;
+	int				kick_off;
+	struct timeval	t_start;
 	pthread_mutex_t	death_lock;
 	pthread_mutex_t	print_lock;
-	int				kick_off;
 } t_params;
 
 typedef struct s_philo_data
 {
-	unsigned int	id;
-	struct timeval	last_meal;
-	unsigned int	n_meals;
 	int				time_left;
+	unsigned int	id;
+	unsigned int	n_meals;
+	struct timeval	last_meal;
+	struct s_params	*params;
+	struct s_node	*list;
 	pthread_t		thread;
 	pthread_mutex_t	*l_fork;
 	pthread_mutex_t	*r_fork;
-	struct s_params	*params;
-	struct s_node	*list;
 } t_philo_data;
 
 
