@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 14:43:10 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/04/12 23:03:11 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/04/13 14:13:31 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ int	create_fork(unsigned int id, pthread_mutex_t **fork)
 t_philo_data	*create_philosopher(unsigned int id, t_params *params, t_node *prev)
 {
 	t_philo_data	*data;
+	void			*(*func)(void *);
 
 	data = malloc(sizeof(t_philo_data));
 	if (data == NULL)
@@ -47,7 +48,11 @@ t_philo_data	*create_philosopher(unsigned int id, t_params *params, t_node *prev
 	data->params = params;
 	data->id = id;
 	data->n_meals = 0;
-	if (pthread_create(&(data->thread), NULL, &philo_behaviour, (void *)(data)) != 0)
+	if (params->n_philo > 1)
+		func = &philo_behaviour;
+	else
+		func = &lone_wolf;
+	if (pthread_create(&(data->thread), NULL, func, (void *)(data)) != 0)
 	{
 		pthread_mutex_destroy((data->r_fork));
 		printf("[ERROR]: Thread with philo_id %u initialization failed\n", data->id);
@@ -58,13 +63,18 @@ t_philo_data	*create_philosopher(unsigned int id, t_params *params, t_node *prev
 
 static void	starve_check_loop(t_node *philos)
 {
-	usleep(philos->philo_data->params->t_die * 500);
-	while (philos->philo_data->params->death == 0)
+	if (philos->philo_data->params->n_philo > 1)
 	{
-		if (check_starvation(philos->philo_data) == 1)
-			die(philos->philo_data, 1);
-		philos = philos->next;
 		usleep(philos->philo_data->params->t_die * 500);
+		while (philos->philo_data->params->death == 0)
+		{
+			pthread_mutex_lock(&(philos->philo_data->params->meal_lock));
+			if (check_starvation(philos->philo_data) == 1)
+				die(philos->philo_data, 1);
+			pthread_mutex_unlock(&(philos->philo_data->params->meal_lock));
+			philos = philos->next;
+			usleep(philos->philo_data->params->t_die * 500);
+		}
 	}
 }
 
@@ -129,6 +139,13 @@ static t_params *init_params(int argc, char *argv[])
 		{
 			free(params);
 			pthread_mutex_destroy(&params->death_lock);
+			return (NULL);
+		}
+		if (pthread_mutex_init(&params->meal_lock, NULL) != 0)
+		{
+			free(params);
+			pthread_mutex_destroy(&params->death_lock);
+			pthread_mutex_destroy(&params->print_lock);
 			return (NULL);
 		}
 	}

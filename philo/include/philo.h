@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 14:50:45 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/04/12 22:53:47 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/04/13 14:32:12 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,15 +20,15 @@
 # include <time.h>
 # include <pthread.h>
 
-typedef struct	s_node
+typedef struct s_node
 {
 	unsigned int		id;
 	struct s_node		*prev;
 	struct s_node		*next;
 	struct s_philo_data	*philo_data;
-} t_node;
+}	t_node;
 
-typedef struct	s_params
+typedef struct s_params
 {
 	unsigned int	n_philo;
 	unsigned int	t_die;
@@ -40,7 +40,8 @@ typedef struct	s_params
 	struct timeval	t_start;
 	pthread_mutex_t	death_lock;
 	pthread_mutex_t	print_lock;
-} t_params;
+	pthread_mutex_t	meal_lock;
+}	t_params;
 
 typedef struct s_philo_data
 {
@@ -53,27 +54,29 @@ typedef struct s_philo_data
 	pthread_t		thread;
 	pthread_mutex_t	*l_fork;
 	pthread_mutex_t	*r_fork;
-} t_philo_data;
+}	t_philo_data;
 
+t_node			*create_circle(t_params *params);
 
-t_node	*create_circle(t_params *params);
+t_philo_data	*create_philosopher(unsigned int id,
+					t_params *params, t_node *prev);
 
-t_philo_data	*create_philosopher(unsigned int id, t_params *params, t_node *prev);
+void			*philo_behaviour(void *philo_data);
 
-void	*philo_behaviour(void *philo_data);
+void			die(t_philo_data *data, int result);
 
-void	die(t_philo_data *data, int result);
+int				time_diff(struct timeval *start, struct timeval *end);
 
-int		time_diff(struct timeval *start, struct timeval *end);
+void			wait_and_free(t_node **philos);
 
-void	wait_and_free(t_node **philos);
+void			clean_params(t_params **params);
 
-void	clean_params(t_params **params);
+void			cleanse_list(t_node **list);
 
-void	cleanse_list(t_node **list);
-
-int	check_starvation(t_philo_data *data);
+int				check_starvation(t_philo_data *data);
 
 unsigned int	atou(char *string);
+
+void			*lone_wolf(void *data);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 11:39:05 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/04/12 22:54:26 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/04/13 14:28:35 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 
 int	time_diff(struct timeval *start, struct timeval *end)
 {
-	return ((end->tv_sec * 1000 + end->tv_usec / 1000) - (start->tv_sec * 1000 + start->tv_usec / 1000));
+	return ((end->tv_sec * 1000 + end->tv_usec / 1000)
+		- (start->tv_sec * 1000 + start->tv_usec / 1000));
 }
-
 
 size_t	ft_strlen(char *string)
 {

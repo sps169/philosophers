@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 19:12:39 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/04/12 22:00:12 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/04/13 14:17:10 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,7 +126,9 @@ static int	wait_start(t_params *params)
 
 static void	update_meal_time(t_philo_data *philo_data)
 {
+	pthread_mutex_lock(&(philo_data->params->meal_lock));
 	gettimeofday(&philo_data->last_meal, NULL);
+	pthread_mutex_unlock(&(philo_data->params->meal_lock));
 }
 
 static void	take_forks(t_philo_data *philo_data)
@@ -151,6 +153,22 @@ static int	eat(t_philo_data *philo_data)
 	pthread_mutex_unlock(philo_data->l_fork);
 	pthread_mutex_unlock(philo_data->r_fork);
 	return (is_dead);
+}
+
+void	*lone_wolf(void *data)
+{
+	t_philo_data	*philo_data;
+
+	philo_data = (t_philo_data *)data;
+	if (wait_start(philo_data->params) == -1)
+		return (NULL);
+	update_meal_time(philo_data);
+	pthread_mutex_lock(philo_data->r_fork);
+	print_update(philo_data, 'r');
+	real_sleep(philo_data->params->t_die);
+	print_death(philo_data);
+	pthread_mutex_unlock(philo_data->r_fork);
+	return (NULL);
 }
 
 void	*philo_behaviour(void *data)

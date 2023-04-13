@@ -6,15 +6,16 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 15:02:53 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/04/12 22:20:44 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/04/13 14:32:10 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static t_node	*create_node(unsigned int id, t_node *prev, t_node *next, t_params *params)
+static t_node	*create_node(unsigned int id,
+	t_node *prev, t_node *next, t_params *params)
 {
-	t_node *node;
+	t_node	*node;
 
 	node = malloc(sizeof(t_node));
 	if (node == NULL)
@@ -69,11 +70,12 @@ void	cleanse_list(t_node **list)
 	t_node			*aux;
 
 	aux = NULL;
-	while(*list != NULL && (*list)->next != NULL && (*list)->next->id != 1)
+	while (*list != NULL && (*list)->next != NULL && (*list)->next->id != 1)
 		*list = (*list)->next;
 	while (*list != NULL)
 	{
-		aux = (*list)->prev;
+		if ((*list)->prev != *list)
+			aux = (*list)->prev;
 		if ((*list)->next != NULL)
 			(*list)->next->prev = NULL;
 		if ((*list)->prev != NULL)
