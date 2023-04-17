@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 14:50:45 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/04/13 14:32:12 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/04/18 00:30:35 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,5 +78,27 @@ int				check_starvation(t_philo_data *data);
 unsigned int	atou(char *string);
 
 void			*lone_wolf(void *data);
+
+t_params		*init_params(int argc, char *argv[]);
+
+void			print_update(t_philo_data *data, char print_type);
+
+void			print_death(t_philo_data *data);
+
+void			update_meal_time(t_philo_data *philo_data);
+
+void			real_sleep(int m_sec);
+
+int				check_starvation(t_philo_data *data);
+
+int				sleep_or_die(int sleep, t_philo_data *data);
+
+void			die(t_philo_data *data, int result);
+
+int				wait_start(t_params *params);
+
+void			take_forks(t_philo_data *philo_data);
+
+int				eat(t_philo_data *philo_data);
 
 #endif

@@ -7,6 +7,11 @@ SRC = 	$(SRC_DIR)main.c				\
 		$(SRC_DIR)philo_behaviour.c		\
 		$(SRC_DIR)utils.c				\
 		$(SRC_DIR)cleanup.c				\
+		$(SRC_DIR)creation.c			\
+		$(SRC_DIR)init_params.c			\
+		$(SRC_DIR)philo_time.c			\
+		$(SRC_DIR)philo_print.c			\
+		$(SRC_DIR)philo_actions.c		\
 
 OBJS = $(SRC:.c=.o)
 

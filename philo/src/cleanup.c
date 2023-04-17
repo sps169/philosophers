@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 12:11:20 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/04/13 14:27:01 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/04/18 00:20:10 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	wait_and_free(t_node **philos)
 	while (curr_node->id != 1 || first_node == -1)
 	{
 		first_node = pthread_join(curr_node->philo_data->thread, NULL);
-		curr_node = curr_node->next; 
+		curr_node = curr_node->next;
 	}
 	cleanse_list(philos);
 }
