@@ -6,11 +6,24 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 00:17:49 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/04/18 00:21:07 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/06/14 23:02:34 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+static int	init_more_mutex(t_params *params)
+{
+	if (pthread_mutex_init(&params->kick_off_lock, NULL) != 0)
+	{
+		free(params);
+		pthread_mutex_destroy(&params->death_lock);
+		pthread_mutex_destroy(&params->print_lock);
+		pthread_mutex_destroy(&params->meal_lock);
+		return (0);
+	}
+	return (1);
+}
 
 static int	init_mutex(t_params *params)
 {
@@ -32,7 +45,7 @@ static int	init_mutex(t_params *params)
 		pthread_mutex_destroy(&params->print_lock);
 		return (0);
 	}
-	return (1);
+	return (init_more_mutex(params));
 }
 
 static int	check_params(t_params *params)

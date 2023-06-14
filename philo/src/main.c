@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 14:43:10 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/04/18 00:21:17 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/06/14 22:57:24 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,15 +33,18 @@ static int	start_philo(t_params *params)
 {
 	t_node	*philos;
 
+	pthread_mutex_lock(&(params->kick_off_lock));
 	philos = create_circle(params);
 	if (philos == NULL)
 	{
 		printf("List creation failed\n");
 		params->kick_off = -1;
+		pthread_mutex_unlock(&(params->kick_off_lock));
 		return (-1);
 	}
 	gettimeofday(&(params->t_start), NULL);
 	params->kick_off = 1;
+	pthread_mutex_unlock(&(params->kick_off_lock));
 	starve_check_loop(philos);
 	wait_and_free(&philos);
 	return (0);

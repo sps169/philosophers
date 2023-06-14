@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 00:29:28 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/04/18 00:30:20 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/06/14 22:57:29 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,13 +26,8 @@ void	die(t_philo_data *data, int result)
 
 int	wait_start(t_params *params)
 {
-	while (params->kick_off != 1)
-	{
-		if (params->kick_off == -1)
-			return (-1);
-		else
-			usleep(10);
-	}
+	pthread_mutex_lock(&(params->kick_off_lock));
+	pthread_mutex_unlock(&(params->kick_off_lock));
 	return (params->kick_off);
 }
 

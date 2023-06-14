@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 12:11:20 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/04/18 00:20:10 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/06/14 22:56:42 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,5 +32,6 @@ void	clean_params(t_params **params)
 	pthread_mutex_destroy(&((*params)->death_lock));
 	pthread_mutex_destroy(&((*params)->print_lock));
 	pthread_mutex_destroy(&((*params)->meal_lock));
+	pthread_mutex_destroy(&((*params)->kick_off_lock));
 	free(*params);
 }
