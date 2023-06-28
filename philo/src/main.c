@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 14:43:10 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/06/14 22:57:24 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/06/28 21:47:38 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,15 +17,19 @@ static void	starve_check_loop(t_node *philos)
 	if (philos->philo_data->params->n_philo > 1)
 	{
 		usleep(philos->philo_data->params->t_die * 500);
+		pthread_mutex_lock(&philos->philo_data->params->death_lock);
 		while (philos->philo_data->params->death == 0)
 		{
+			pthread_mutex_unlock(&philos->philo_data->params->death_lock);
 			pthread_mutex_lock(&(philos->philo_data->params->meal_lock));
 			if (check_starvation(philos->philo_data) == 1)
 				die(philos->philo_data, 1);
 			pthread_mutex_unlock(&(philos->philo_data->params->meal_lock));
 			philos = philos->next;
 			usleep(philos->philo_data->params->t_die * 500);
+			pthread_mutex_lock(&philos->philo_data->params->death_lock);
 		}
+		pthread_mutex_unlock(&philos->philo_data->params->death_lock);
 	}
 }
 

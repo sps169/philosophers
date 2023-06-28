@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 19:12:39 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/04/18 00:31:05 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/06/28 21:44:46 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,16 +38,20 @@ void	*philo_behaviour(void *data)
 	update_meal_time(philo_data);
 	if (philo_data->id % 2 != 0)
 		usleep(1000);
+	pthread_mutex_lock(&philo_data->params->death_lock);
 	while (philo_data->params->death == 0 && (philo_data->params->n_meals == 0
 			|| (philo_data->n_meals < philo_data->params->n_meals)))
 	{
+		pthread_mutex_unlock(&philo_data->params->death_lock);
 		take_forks(philo_data);
 		if (eat(philo_data) != 0)
 			return (NULL);
 		if (sleep_or_die(philo_data->params->t_sleep, philo_data) == 1)
 			return (NULL);
 		print_update(philo_data, 't');
+		pthread_mutex_lock(&philo_data->params->death_lock);
 	}
+	pthread_mutex_unlock(&philo_data->params->death_lock);
 	if (philo_data->n_meals >= philo_data->params->n_meals)
 		die(philo_data, -1);
 	return (NULL);
