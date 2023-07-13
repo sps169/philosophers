@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 19:12:39 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/06/28 21:44:46 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/07/13 16:44:46 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void	*lone_wolf(void *data)
 	t_philo_data	*philo_data;
 
 	philo_data = (t_philo_data *)data;
-	if (wait_start(philo_data->params) == -1)
+	if (wait_start(philo_data->params) <= 0)
 		return (NULL);
 	update_meal_time(philo_data);
 	pthread_mutex_lock(philo_data->r_fork);
@@ -33,7 +33,7 @@ void	*philo_behaviour(void *data)
 	t_philo_data	*philo_data;
 
 	philo_data = (t_philo_data *)data;
-	if (wait_start(philo_data->params) == -1)
+	if (wait_start(philo_data->params) <= 0)
 		return (NULL);
 	update_meal_time(philo_data);
 	if (philo_data->id % 2 != 0)
