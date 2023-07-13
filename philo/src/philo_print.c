@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 00:23:38 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/04/18 00:31:27 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/07/13 21:06:20 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	print_update(t_philo_data *data, char print_type)
 
 	pthread_mutex_lock(&(data->params->death_lock));
 	pthread_mutex_lock(&(data->params->print_lock));
-	if (data->params->death == 0)
+	if (data->params->death != 1)
 	{
 		gettimeofday(&curr_time, NULL);
 		timediff = time_diff(&data->params->t_start, &curr_time);
