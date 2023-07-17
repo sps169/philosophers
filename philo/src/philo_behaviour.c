@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 19:12:39 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/07/17 19:59:14 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/07/17 21:28:58 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,11 @@ void	*philo_behaviour(void *data)
 	pthread_mutex_lock(&philo_data->params->death_lock);
 	pthread_mutex_lock(philo_data->n_meals_mutex);
 	if (philo_loop(philo_data) == NULL)
+	{
+		pthread_mutex_unlock(&philo_data->params->death_lock);
+		pthread_mutex_unlock(philo_data->n_meals_mutex);
 		return (NULL);
+	}
 	pthread_mutex_unlock(&philo_data->params->death_lock);
 	if (philo_data->n_meals >= philo_data->params->n_meals)
 		die(philo_data, -1);

@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 14:43:10 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/07/17 19:58:19 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/07/17 21:08:58 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,16 @@
 
 static void	execute_starve_check(t_node *philos)
 {
-	while (philos->id <= philos->philo_data->params->n_philo
+	int	first;
+
+	first = 1;
+	while (((philos->id != 1) || first == 1)
 		&& philos->philo_data->params->death == 0)
 	{
 		pthread_mutex_unlock(&philos->philo_data->params->death_lock);
 		pthread_mutex_lock(&(philos->philo_data->params->meal_lock));
+		if (first == 1)
+			first = 0;
 		if (check_starvation(philos->philo_data) == 1)
 			die(philos->philo_data, 1);
 		pthread_mutex_unlock(&(philos->philo_data->params->meal_lock));
@@ -28,15 +33,12 @@ static void	execute_starve_check(t_node *philos)
 }
 
 static void	starve_check_loop(t_node *philos)
-{
-	int	curr_philo;
-
+{	
 	if (philos->philo_data->params->n_philo > 1)
 	{
 		while (philos->id != 1)
 			philos = philos->prev;
-		curr_philo = philos->prev->id;
-		usleep(philos->philo_data->params->t_die * 500);
+		real_sleep(philos->philo_data->params->t_die / 2);
 		pthread_mutex_lock(&philos->philo_data->params->death_lock);
 		while (philos->philo_data->params->death == 0)
 		{
@@ -44,8 +46,9 @@ static void	starve_check_loop(t_node *philos)
 			pthread_mutex_lock(&philos->philo_data->params->death_lock);
 			execute_starve_check(philos);
 			pthread_mutex_unlock(&(philos->philo_data->params->death_lock));
-			usleep(philos->philo_data->params->t_die * 1000);
+			real_sleep(philos->philo_data->params->t_die);
 			pthread_mutex_lock(&philos->philo_data->params->death_lock);
+			printf("CHECKED\n");
 		}
 		pthread_mutex_unlock(&philos->philo_data->params->death_lock);
 	}
