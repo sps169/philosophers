@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 00:25:01 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/04/18 00:31:51 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/07/17 19:54:51 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,12 +40,20 @@ void	real_sleep(int m_sec)
 int	check_starvation(t_philo_data *data)
 {
 	struct timeval	curr_time;
+	int				ret_value;
 
+	ret_value = 0;
 	gettimeofday(&curr_time, NULL);
-	if (time_diff(&(data->last_meal), &curr_time) > (int)(data->params->t_die))
-		return (1);
+	pthread_mutex_lock(data->n_meals_mutex);
+	if (data->params->n_meals != 0 && data->n_meals == data->params->n_meals)
+		ret_value = 0;
+	else if (time_diff(&(data->last_meal), &curr_time)
+		> (int)(data->params->t_die))
+		ret_value = 1;
 	else
-		return (0);
+		ret_value = 0;
+	pthread_mutex_unlock(data->n_meals_mutex);
+	return (ret_value);
 }
 
 int	sleep_or_die(int sleep, t_philo_data *data)

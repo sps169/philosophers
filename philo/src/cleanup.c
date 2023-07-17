@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 12:11:20 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/07/13 16:41:21 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/07/17 19:41:16 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,4 +34,11 @@ void	clean_params(t_params **params)
 	pthread_mutex_destroy(&((*params)->meal_lock));
 	pthread_mutex_destroy(&((*params)->kick_off_lock));
 	free(*params);
+}
+
+void	clean_philo_data(t_philo_data **data)
+{
+	pthread_mutex_destroy(((*data)->r_fork));
+	pthread_mutex_destroy(((*data)->n_meals_mutex));
+	free(data);
 }

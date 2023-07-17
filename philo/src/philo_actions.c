@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 00:29:28 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/07/13 16:29:33 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/07/17 19:47:19 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,9 @@ int	eat(t_philo_data *philo_data)
 	gettimeofday(&(philo_data->last_meal), NULL);
 	print_update(philo_data, 'e');
 	is_dead = sleep_or_die(philo_data->params->t_eat, philo_data);
+	pthread_mutex_lock(philo_data->n_meals_mutex);
 	philo_data->n_meals++;
+	pthread_mutex_unlock(philo_data->n_meals_mutex);
 	if (!is_dead)
 		print_update(philo_data, 's');
 	pthread_mutex_unlock(philo_data->l_fork);

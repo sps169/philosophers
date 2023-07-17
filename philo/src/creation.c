@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 00:06:08 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/04/18 00:20:42 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/07/17 19:41:02 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,35 @@ static int	init_thread(t_philo_data *data, void *(*f)(void *))
 	return (1);
 }
 
+static int	create_meals_mutex(unsigned int id, pthread_mutex_t **mutex)
+{
+	*mutex = malloc(sizeof(pthread_mutex_t));
+	if (*mutex == NULL)
+		return (-1);
+	if (pthread_mutex_init(*mutex, NULL) != 0)
+	{
+		printf("[ERROR]: Node with id %u mutex initialization failed\n", id);
+		return (-1);
+	}
+	return (0);
+}
+
+static int	philo_mutex_setup(unsigned int id, t_philo_data *data)
+{
+	if (create_fork(id, &(data->r_fork)) == -1)
+	{
+		free(data);
+		return (-1);
+	}
+	if (create_meals_mutex(id, &(data->n_meals_mutex)) == -1)
+	{
+		pthread_mutex_destroy((data->r_fork));
+		free(data);
+		return (-1);
+	}
+	return (0);
+}
+
 t_philo_data	*create_philosopher(unsigned int id,
 	t_params *params, t_node *prev)
 {
@@ -48,11 +77,8 @@ t_philo_data	*create_philosopher(unsigned int id,
 		return (NULL);
 	if (prev != NULL)
 		data->l_fork = prev->philo_data->r_fork;
-	if (create_fork(id, &(data->r_fork)) == -1)
-	{
-		free(data);
+	if (philo_mutex_setup(id, data) == -1)
 		return (NULL);
-	}
 	data->params = params;
 	data->id = id;
 	data->n_meals = 0;
@@ -61,6 +87,9 @@ t_philo_data	*create_philosopher(unsigned int id,
 	else
 		func = &lone_wolf;
 	if (!init_thread(data, func))
+	{
+		clean_philo_data(&data);
 		return (NULL);
+	}
 	return (data);
 }

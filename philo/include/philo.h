@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 14:50:45 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/06/14 22:47:48 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/07/17 19:38:49 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ typedef struct s_philo_data
 	pthread_t		thread;
 	pthread_mutex_t	*l_fork;
 	pthread_mutex_t	*r_fork;
+	pthread_mutex_t	*n_meals_mutex;
 }	t_philo_data;
 
 t_node			*create_circle(t_params *params);
@@ -101,5 +102,7 @@ int				wait_start(t_params *params);
 void			take_forks(t_philo_data *philo_data);
 
 int				eat(t_philo_data *philo_data);
+
+void			clean_philo_data(t_philo_data **data);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 15:02:53 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/07/13 16:46:35 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/07/17 19:24:42 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,9 @@ void	cleanse_list(t_node **list)
 		if ((*list)->prev != NULL)
 			(*list)->prev->next = NULL;
 		pthread_mutex_destroy(((*list)->philo_data->r_fork));
+		pthread_mutex_destroy(((*list)->philo_data->n_meals_mutex));
 		free((*list)->philo_data->r_fork);
+		free((*list)->philo_data->n_meals_mutex);
 		free((*list)->philo_data);
 		free(*list);
 		*list = aux;
