@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 14:50:45 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/07/17 19:38:49 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/09/11 17:38:51 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,18 +30,22 @@ typedef struct s_node
 
 typedef struct s_params
 {
-	unsigned int	n_philo;
-	unsigned int	t_die;
-	unsigned int	t_sleep;
-	unsigned int	t_eat;
-	unsigned int	n_meals;
-	unsigned int	death;
-	int				kick_off;
-	struct timeval	t_start;
-	pthread_mutex_t	death_lock;
-	pthread_mutex_t	print_lock;
-	pthread_mutex_t	meal_lock;
-	pthread_mutex_t	kick_off_lock;
+	unsigned int			n_philo;
+	unsigned int			t_die;
+	unsigned int			t_sleep;
+	unsigned int			t_eat;
+	unsigned int			n_meals;
+	unsigned int			death;
+	unsigned int			n_satisfied;
+	int						kick_off;
+	struct timeval			t_start;
+	pthread_mutex_t			death_lock;
+	pthread_mutex_t			print_lock;
+	pthread_mutex_t			meal_lock;
+	pthread_mutex_t			kick_off_lock;
+	pthread_mutex_t			satisfaction_lock;
+	pthread_mutex_t			starve_queue_lock;
+	struct s_starve_node	*starve_queue;
 }	t_params;
 
 typedef struct s_philo_data
@@ -56,7 +60,15 @@ typedef struct s_philo_data
 	pthread_mutex_t	*l_fork;
 	pthread_mutex_t	*r_fork;
 	pthread_mutex_t	*n_meals_mutex;
+	pthread_mutex_t	*last_meal_mutex;
 }	t_philo_data;
+
+typedef struct s_starve_node
+{
+	unsigned int			death_ms;
+	struct s_philo_data		*philo;
+	struct s_starve_node	*next;
+}	t_starve_node;
 
 t_node			*create_circle(t_params *params);
 
@@ -64,8 +76,6 @@ t_philo_data	*create_philosopher(unsigned int id,
 					t_params *params, t_node *prev);
 
 void			*philo_behaviour(void *philo_data);
-
-void			die(t_philo_data *data, int result);
 
 int				time_diff(struct timeval *start, struct timeval *end);
 
@@ -95,7 +105,7 @@ int				check_starvation(t_philo_data *data);
 
 int				sleep_or_die(int sleep, t_philo_data *data);
 
-void			die(t_philo_data *data, int result);
+void			die(t_philo_data *data);
 
 int				wait_start(t_params *params);
 
@@ -104,5 +114,13 @@ void			take_forks(t_philo_data *philo_data);
 int				eat(t_philo_data *philo_data);
 
 void			clean_philo_data(t_philo_data **data);
+
+t_starve_node	*create_starve_node(unsigned int death_ms, t_philo_data *data);
+
+int				add_starve_node(unsigned int death_ms, t_philo_data *data);
+
+t_starve_node	*get_next_starve_node(t_params *params);
+
+void			erase_queue(t_params params);
 
 #endif

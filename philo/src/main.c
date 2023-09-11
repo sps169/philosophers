@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 14:43:10 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/07/17 21:08:58 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/09/11 17:47:27 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,42 +14,47 @@
 
 static void	execute_starve_check(t_node *philos)
 {
-	int	first;
+	t_starve_node	*starve_node;
+	struct timeval	curr_time;
+	unsigned int	curr_ms;
 
-	first = 1;
-	while (((philos->id != 1) || first == 1)
-		&& philos->philo_data->params->death == 0)
-	{
-		pthread_mutex_unlock(&philos->philo_data->params->death_lock);
-		pthread_mutex_lock(&(philos->philo_data->params->meal_lock));
-		if (first == 1)
-			first = 0;
-		if (check_starvation(philos->philo_data) == 1)
-			die(philos->philo_data, 1);
-		pthread_mutex_unlock(&(philos->philo_data->params->meal_lock));
-		philos = philos->next;
-		pthread_mutex_lock(&philos->philo_data->params->death_lock);
-	}
+	curr_ms = 0;
+	starve_node = NULL;
+	starve_node = get_next_starve_node(philos->philo_data->params);
+	gettimeofday(&curr_time, NULL);
+	curr_ms = time_diff(&(philos->philo_data->params->t_start), &curr_time);
+	while (curr_ms < starve_node->death_ms)
+		usleep(starve_node->death_ms - curr_ms);
+	if (check_starvation(starve_node->philo) == 1)
+		die(starve_node->philo);
 }
 
 static void	starve_check_loop(t_node *philos)
-{	
+{
 	if (philos->philo_data->params->n_philo > 1)
 	{
 		while (philos->id != 1)
 			philos = philos->prev;
 		real_sleep(philos->philo_data->params->t_die / 2);
 		pthread_mutex_lock(&philos->philo_data->params->death_lock);
-		while (philos->philo_data->params->death == 0)
+		pthread_mutex_lock(&philos->philo_data->params->meal_lock);
+		pthread_mutex_lock(&philos->philo_data->params->satisfaction_lock);
+		while (philos->philo_data->params->death == 0
+				&& (philos->philo_data->params->n_meals == 0 ||
+				(philos->philo_data->params->n_meals != 0 &&
+				philos->philo_data->params->n_satisfied <
+				philos->philo_data->params->n_philo)))
 		{
+			pthread_mutex_unlock(&philos->philo_data->params->satisfaction_lock);
+			pthread_mutex_unlock(&philos->philo_data->params->meal_lock);
 			pthread_mutex_unlock(&philos->philo_data->params->death_lock);
-			pthread_mutex_lock(&philos->philo_data->params->death_lock);
 			execute_starve_check(philos);
-			pthread_mutex_unlock(&(philos->philo_data->params->death_lock));
-			real_sleep(philos->philo_data->params->t_die);
 			pthread_mutex_lock(&philos->philo_data->params->death_lock);
-			printf("CHECKED\n");
+			pthread_mutex_lock(&philos->philo_data->params->meal_lock);
+			pthread_mutex_lock(&philos->philo_data->params->satisfaction_lock);
 		}
+		pthread_mutex_unlock(&philos->philo_data->params->satisfaction_lock);
+		pthread_mutex_unlock(&philos->philo_data->params->meal_lock);
 		pthread_mutex_unlock(&philos->philo_data->params->death_lock);
 	}
 }

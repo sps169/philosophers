@@ -12,6 +12,7 @@ SRC = 	$(SRC_DIR)main.c				\
 		$(SRC_DIR)philo_time.c			\
 		$(SRC_DIR)philo_print.c			\
 		$(SRC_DIR)philo_actions.c		\
+		$(SRC_DIR)starvation_queue.c	\
 
 OBJS = $(SRC:.c=.o)
 

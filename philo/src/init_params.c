@@ -6,55 +6,41 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 00:17:49 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/06/14 23:02:34 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/09/11 17:39:25 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static int	init_more_mutex(t_params *params)
-{
-	if (pthread_mutex_init(&params->kick_off_lock, NULL) != 0)
-	{
-		free(params);
-		pthread_mutex_destroy(&params->death_lock);
-		pthread_mutex_destroy(&params->print_lock);
-		pthread_mutex_destroy(&params->meal_lock);
-		return (0);
-	}
-	return (1);
-}
-
 static int	init_mutex(t_params *params)
 {
+	int	status;
+
+	status = 1;
 	if (pthread_mutex_init(&(params->death_lock), NULL) != 0)
-	{
-		free(params);
-		return (0);
-	}
+		status = 0;
 	if (pthread_mutex_init(&params->print_lock, NULL) != 0)
-	{
-		free(params);
-		pthread_mutex_destroy(&params->death_lock);
-		return (0);
-	}
+		status = 0;
 	if (pthread_mutex_init(&params->meal_lock, NULL) != 0)
-	{
-		free(params);
-		pthread_mutex_destroy(&params->death_lock);
-		pthread_mutex_destroy(&params->print_lock);
-		return (0);
-	}
-	return (init_more_mutex(params));
+		status = 0;
+	if (pthread_mutex_init(&params->kick_off_lock, NULL) != 0)
+		status = 0;
+	if (pthread_mutex_init(&params->satisfaction_lock, NULL) != 0)
+		status = 0;
+	if (pthread_mutex_init(&params->starve_queue_lock, NULL) != 0)
+		status = 0;
+	if (status == 0)
+		clean_params(&params);
+	return (status);
 }
 
 static int	check_params(t_params *params)
 {
-	if (params->n_philo <= 0 || params->n_philo == 4294967295
-		|| params->t_die < 0 || params->t_die == 4294967295
-		|| params->t_eat < 0 || params->t_eat == 4294967295
-		|| params->t_sleep < 0 || params->t_sleep == 4294967295
-		|| params->n_meals < 0 || params->n_meals == 4294967295)
+	if (params->n_philo == 0 || params->n_philo == 4294967295
+		|| params->t_die == 4294967295
+		|| params->t_eat == 4294967295
+		|| params->t_sleep == 4294967295
+		|| params->n_meals == 4294967295)
 	{
 		free(params);
 		return (0);
@@ -82,6 +68,7 @@ t_params	*init_params(int argc, char *argv[])
 			params->n_meals = atou(argv[5]);
 		else
 			params->n_meals = 0;
+		params->n_satisfied = 0;
 		params->death = 0;
 		params->kick_off = 0;
 		if (!check_params(params))
