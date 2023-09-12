@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 19:12:39 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/09/11 17:50:48 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/09/12 11:14:58 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,15 +30,15 @@ void	*lone_wolf(void *data)
 
 static void	*philo_loop(t_philo_data *philo_data)
 {
+	pthread_mutex_lock(&philo_data->params->satisfaction_lock);
 	pthread_mutex_lock(&philo_data->params->death_lock);
 	pthread_mutex_lock(philo_data->n_meals_mutex);
-	pthread_mutex_lock(&philo_data->params->satisfaction_lock);
 	while (philo_data->params->death == 0
 			&& philo_data->params->n_satisfied != philo_data->params->n_philo)
 	{
-		pthread_mutex_unlock(&philo_data->params->satisfaction_lock);
 		pthread_mutex_unlock(philo_data->n_meals_mutex);
 		pthread_mutex_unlock(&philo_data->params->death_lock);
+		pthread_mutex_unlock(&philo_data->params->satisfaction_lock);
 		take_forks(philo_data);
 		if (eat(philo_data) != 0)
 			return (NULL);
