@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 13:28:22 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/09/11 16:36:16 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/09/13 12:38:39 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,14 +54,19 @@ t_starve_node	*get_next_starve_node(t_params *params)
 
 	node = NULL;
 	pthread_mutex_lock(&(params->starve_queue_lock));
-	while (params->starve_queue == NULL)
+	pthread_mutex_lock(&(params->death_lock));
+	while (params->starve_queue == NULL && params->death == 0)
 	{
+		pthread_mutex_unlock(&(params->death_lock));
 		pthread_mutex_unlock(&(params->starve_queue_lock));
 		usleep(1000);
 		pthread_mutex_lock(&(params->starve_queue_lock));
+		pthread_mutex_lock(&(params->death_lock));
 	}
+	pthread_mutex_unlock(&(params->death_lock));
 	node = params->starve_queue;
-	params->starve_queue = params->starve_queue->next;
+	if (params->starve_queue != NULL)
+		params->starve_queue = params->starve_queue->next;
 	pthread_mutex_unlock(&(params->starve_queue_lock));
 	return (node);
 }

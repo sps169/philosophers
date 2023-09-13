@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 12:11:20 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/09/12 11:38:56 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/09/13 12:34:42 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ void	wait_and_free(t_node **philos)
 		first_node = pthread_join(curr_node->philo_data->thread, NULL);
 		curr_node = curr_node->next;
 	}
+	erase_queue(*(*philos)->philo_data->params);
 	cleanse_list(philos);
 }
 
@@ -43,5 +44,8 @@ void	clean_philo_data(t_philo_data **data)
 	pthread_mutex_destroy(((*data)->r_fork));
 	pthread_mutex_destroy(((*data)->n_meals_mutex));
 	pthread_mutex_destroy(((*data)->last_meal_mutex));
+	free(((*data)->r_fork));
+	free(((*data)->n_meals_mutex));
+	free(((*data)->last_meal_mutex));
 	free(data);
 }

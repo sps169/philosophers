@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 00:25:01 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/09/12 12:06:10 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/09/13 11:55:28 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 
 void	update_meal_time(t_philo_data *philo_data)
 {
-	pthread_mutex_lock(&(philo_data->params->meal_lock));
+	pthread_mutex_lock(philo_data->last_meal_mutex);
 	gettimeofday(&philo_data->last_meal, NULL);
-	pthread_mutex_unlock(&(philo_data->params->meal_lock));
+	pthread_mutex_unlock(philo_data->last_meal_mutex);
 }
 
 void	real_sleep(int m_sec)
@@ -62,7 +62,9 @@ int	sleep_or_die(int sleep, t_philo_data *data)
 	int				time_left;
 
 	gettimeofday(&curr_time, NULL);
+	pthread_mutex_lock(data->last_meal_mutex);
 	time_left = data->params->t_die - time_diff(&data->last_meal, &curr_time);
+	pthread_mutex_unlock(data->last_meal_mutex);
 	if (time_left < sleep)
 	{
 		real_sleep(time_left);

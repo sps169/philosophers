@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 14:43:10 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/09/12 12:06:19 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/09/13 12:39:49 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,22 +21,28 @@ static void	execute_starve_check(t_node *philos)
 	curr_ms = 0;
 	starve_node = NULL;
 	starve_node = get_next_starve_node(philos->philo_data->params);
-	gettimeofday(&curr_time, NULL);
-	curr_ms = time_diff(&(philos->philo_data->params->t_start), &curr_time);
-	while (curr_ms < starve_node->death_ms)
+	if (starve_node == NULL)
+		usleep(1000);
+	else
 	{
-		usleep(starve_node->death_ms - curr_ms);
 		gettimeofday(&curr_time, NULL);
 		curr_ms = time_diff(&(philos->philo_data->params->t_start), &curr_time);
+		while (curr_ms < starve_node->death_ms)
+		{
+			usleep(starve_node->death_ms - curr_ms);
+			gettimeofday(&curr_time, NULL);
+			curr_ms = time_diff(&(philos->philo_data->params->t_start), &curr_time);
+		}
+		if (check_starvation(starve_node->philo) == 1)
+			die(starve_node->philo);
+		free(starve_node);
 	}
-	if (check_starvation(starve_node->philo) == 1)
-		die(starve_node->philo);
 }
 
 static void	starve_check_loop(t_node *philos)
 {
-	pthread_mutex_lock(&philos->philo_data->params->death_lock);
 	pthread_mutex_lock(&philos->philo_data->params->satisfaction_lock);
+	pthread_mutex_lock(&philos->philo_data->params->death_lock);
 	while (philos->philo_data->params->death == 0
 			&& (philos->philo_data->params->n_meals == 0 ||
 			(philos->philo_data->params->n_meals != 0 &&
@@ -46,8 +52,8 @@ static void	starve_check_loop(t_node *philos)
 		pthread_mutex_unlock(&philos->philo_data->params->satisfaction_lock);
 		pthread_mutex_unlock(&philos->philo_data->params->death_lock);
 		execute_starve_check(philos);
-		pthread_mutex_lock(&philos->philo_data->params->death_lock);
 		pthread_mutex_lock(&philos->philo_data->params->satisfaction_lock);
+		pthread_mutex_lock(&philos->philo_data->params->death_lock);
 	}
 	pthread_mutex_unlock(&philos->philo_data->params->satisfaction_lock);
 	pthread_mutex_unlock(&philos->philo_data->params->death_lock);

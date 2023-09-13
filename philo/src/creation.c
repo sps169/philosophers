@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 00:06:08 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/09/11 17:31:16 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/09/13 12:13:14 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ static int	init_thread(t_philo_data *data, void *(*f)(void *))
 {
 	if (pthread_create(&(data->thread), NULL, f, (void *)(data)) != 0)
 	{
-		pthread_mutex_destroy((data->r_fork));
 		printf("[ERROR]: Thread with philo_id %u initialization failed\n",
 			data->id);
 		return (0);
@@ -62,12 +61,7 @@ static int	philo_mutex_setup(unsigned int id, t_philo_data *data)
 	if (create_meals_mutex(id, &data->last_meal_mutex) == -1)
 		status = -1;
 	if (status < 0)
-	{
-		pthread_mutex_destroy(data->r_fork);
-		pthread_mutex_destroy(data->n_meals_mutex);
-		pthread_mutex_destroy(data->last_meal_mutex);
-		free(data);
-	}
+		clean_philo_data(&data);
 	return (0);
 }
 
