@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 00:17:49 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/09/19 17:17:01 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/09/19 17:29:52 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,6 @@ static int	check_params(t_params *params)
 		|| params->t_die == 4294967295
 		|| params->t_eat == 4294967295
 		|| params->t_sleep == 4294967295
-		|| params->n_meals == 0
 		|| params->n_meals == 4294967295)
 	{
 		free(params);
