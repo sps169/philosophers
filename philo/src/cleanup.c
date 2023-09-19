@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 12:11:20 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/09/13 12:34:42 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/09/19 16:13:06 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,22 +30,37 @@ void	wait_and_free(t_node **philos)
 
 void	clean_params(t_params **params)
 {
-	pthread_mutex_destroy(&((*params)->death_lock));
-	pthread_mutex_destroy(&((*params)->print_lock));
-	pthread_mutex_destroy(&((*params)->meal_lock));
-	pthread_mutex_destroy(&((*params)->kick_off_lock));
-	pthread_mutex_destroy(&((*params)->satisfaction_lock));
-	pthread_mutex_destroy(&((*params)->starve_queue_lock));
-	free(*params);
+	if (*params != NULL)
+	{
+		pthread_mutex_destroy(&((*params)->death_lock));
+		pthread_mutex_destroy(&((*params)->print_lock));
+		pthread_mutex_destroy(&((*params)->meal_lock));
+		pthread_mutex_destroy(&((*params)->kick_off_lock));
+		pthread_mutex_destroy(&((*params)->satisfaction_lock));
+		pthread_mutex_destroy(&((*params)->starve_queue_lock));
+		free(*params);
+	}
 }
 
-void	clean_philo_data(t_philo_data **data)
+void	clean_philo_data(t_philo_data *data)
 {
-	pthread_mutex_destroy(((*data)->r_fork));
-	pthread_mutex_destroy(((*data)->n_meals_mutex));
-	pthread_mutex_destroy(((*data)->last_meal_mutex));
-	free(((*data)->r_fork));
-	free(((*data)->n_meals_mutex));
-	free(((*data)->last_meal_mutex));
-	free(data);
+	if (data != NULL)
+	{
+		if (data->r_fork != NULL)
+		{
+			pthread_mutex_destroy(data->r_fork);
+			free(data->r_fork);
+		}
+		if (data->n_meals_mutex != NULL)
+		{
+			pthread_mutex_destroy(data->n_meals_mutex);
+			free(data->n_meals_mutex);
+		}
+		if (data->last_meal_mutex != NULL)
+		{
+			pthread_mutex_destroy(data->last_meal_mutex);
+			free(data->last_meal_mutex);
+		}
+		free(data);
+	}
 }

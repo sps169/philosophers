@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 19:12:39 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/09/13 12:17:44 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/09/19 12:02:08 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ static void	*philo_loop(t_philo_data *philo_data)
 	pthread_mutex_lock(&philo_data->params->satisfaction_lock);
 	pthread_mutex_lock(&philo_data->params->death_lock);
 	while (philo_data->params->death == 0
-			&& philo_data->params->n_satisfied != philo_data->params->n_philo)
+		&& philo_data->params->n_satisfied != philo_data->params->n_philo)
 	{
 		pthread_mutex_unlock(&philo_data->params->satisfaction_lock);
 		pthread_mutex_unlock(&philo_data->params->death_lock);

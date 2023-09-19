@@ -26,7 +26,6 @@ INCLUDE = -Iinclude
 THREADS_LIB = -lpthread
 
 CC = gcc
-
 # RACE_CHECK = -g3 -fsanitize=thread
 
 CFLAGS += $(RACE_CHECK)

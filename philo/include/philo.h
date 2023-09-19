@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 14:50:45 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/09/11 17:38:51 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/09/19 16:00:34 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@ void			take_forks(t_philo_data *philo_data);
 
 int				eat(t_philo_data *philo_data);
 
-void			clean_philo_data(t_philo_data **data);
+void			clean_philo_data(t_philo_data *data);
 
 t_starve_node	*create_starve_node(unsigned int death_ms, t_philo_data *data);
 

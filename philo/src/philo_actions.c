@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 00:29:28 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/09/13 11:54:27 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/09/19 12:02:49 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,8 @@ void	take_forks(t_philo_data *philo_data)
 
 	death_ms = philo_data->params->t_die;
 	pthread_mutex_lock(philo_data->last_meal_mutex);
-	death_ms += time_diff(&(philo_data->params->t_start), &(philo_data->last_meal));
+	death_ms += time_diff(&(philo_data->params->t_start),
+			&(philo_data->last_meal));
 	pthread_mutex_unlock(philo_data->last_meal_mutex);
 	add_starve_node(death_ms, philo_data);
 	pthread_mutex_lock(philo_data->l_fork);

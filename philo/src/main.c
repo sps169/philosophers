@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 14:43:10 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/09/13 12:39:49 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/09/19 16:30:41 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,11 +27,12 @@ static void	execute_starve_check(t_node *philos)
 	{
 		gettimeofday(&curr_time, NULL);
 		curr_ms = time_diff(&(philos->philo_data->params->t_start), &curr_time);
-		while (curr_ms < starve_node->death_ms)
+		while (curr_ms <= starve_node->death_ms)
 		{
 			usleep(starve_node->death_ms - curr_ms);
 			gettimeofday(&curr_time, NULL);
-			curr_ms = time_diff(&(philos->philo_data->params->t_start), &curr_time);
+			curr_ms = time_diff(&(philos->philo_data->params->t_start),
+					&curr_time);
 		}
 		if (check_starvation(starve_node->philo) == 1)
 			die(starve_node->philo);
@@ -44,10 +45,10 @@ static void	starve_check_loop(t_node *philos)
 	pthread_mutex_lock(&philos->philo_data->params->satisfaction_lock);
 	pthread_mutex_lock(&philos->philo_data->params->death_lock);
 	while (philos->philo_data->params->death == 0
-			&& (philos->philo_data->params->n_meals == 0 ||
-			(philos->philo_data->params->n_meals != 0 &&
-			philos->philo_data->params->n_satisfied <
-			philos->philo_data->params->n_philo)))
+		&& (philos->philo_data->params->n_meals == 0
+			|| (philos->philo_data->params->n_meals != 0
+				&& philos->philo_data->params->n_satisfied
+				< philos->philo_data->params->n_philo)))
 	{
 		pthread_mutex_unlock(&philos->philo_data->params->satisfaction_lock);
 		pthread_mutex_unlock(&philos->philo_data->params->death_lock);
@@ -57,7 +58,6 @@ static void	starve_check_loop(t_node *philos)
 	}
 	pthread_mutex_unlock(&philos->philo_data->params->satisfaction_lock);
 	pthread_mutex_unlock(&philos->philo_data->params->death_lock);
-
 }
 
 static int	start_philo(t_params *params)

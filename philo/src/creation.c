@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 00:06:08 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/09/13 12:13:14 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/09/19 16:29:30 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ static int	philo_mutex_setup(unsigned int id, t_philo_data *data)
 	if (create_meals_mutex(id, &data->last_meal_mutex) == -1)
 		status = -1;
 	if (status < 0)
-		clean_philo_data(&data);
+		clean_philo_data(data);
 	return (0);
 }
 
@@ -87,7 +87,7 @@ t_philo_data	*create_philosopher(unsigned int id,
 		func = &lone_wolf;
 	if (!init_thread(data, func))
 	{
-		clean_philo_data(&data);
+		clean_philo_data(data);
 		return (NULL);
 	}
 	return (data);
