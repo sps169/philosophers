@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 00:25:01 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/09/13 11:55:28 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/09/19 17:57:59 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,14 +45,17 @@ int	check_starvation(t_philo_data *data)
 	ret_value = 0;
 	gettimeofday(&curr_time, NULL);
 	pthread_mutex_lock(data->last_meal_mutex);
+	pthread_mutex_lock(&data->params->satisfaction_lock);
 	pthread_mutex_lock(&data->params->death_lock);
 	if (time_diff(&(data->last_meal), &curr_time)
-		> (int)(data->params->t_die))
+		> (int)(data->params->t_die)
+		&& data->params->n_satisfied < data->params->n_philo)
 		ret_value = 1;
 	else
 		ret_value = 0;
-	pthread_mutex_unlock(&data->params->death_lock);
 	pthread_mutex_unlock(data->last_meal_mutex);
+	pthread_mutex_unlock(&data->params->satisfaction_lock);
+	pthread_mutex_unlock(&data->params->death_lock);
 	return (ret_value);
 }
 
