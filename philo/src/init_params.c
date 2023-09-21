@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 00:17:49 by sperez-s          #+#    #+#             */
-/*   Updated: 2023/09/19 17:29:52 by sperez-s         ###   ########.fr       */
+/*   Updated: 2023/09/21 12:47:34 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,7 @@ t_params	*init_params(int argc, char *argv[])
 		params->n_satisfied = 0;
 		params->death = 0;
 		params->kick_off = 0;
+		params->starve_queue = 0;
 		if (!check_params(params))
 			return (NULL);
 	}
