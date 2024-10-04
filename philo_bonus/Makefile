@@ -3,20 +3,21 @@ NAME = philo_bonus
 SRC_DIR = ./src/
 
 SRC = 	$(SRC_DIR)main.c				\
+		$(SRC_DIR)utils.c				\
 
 OBJS = $(SRC:.c=.o)
 
 .c.o:
 	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
 
-CFLAGS = -Wextra -Wall -Werror $(RACE_CHECK)
+CFLAGS = -Wextra -Wall -Werror
 
 INCLUDE = -Iinclude
 
 THREADS_LIB = -lpthread
 
 CC = gcc
-RACE_CHECK = -g3 -fsanitize=thread
+RACE_CHECK = -g3 -fsanitize=address
 
 CFLAGS += $(RACE_CHECK)
 

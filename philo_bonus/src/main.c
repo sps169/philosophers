@@ -6,26 +6,43 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 19:27:34 by sperez-s          #+#    #+#             */
-/*   Updated: 2024/10/04 20:40:33 by sperez-s         ###   ########.fr       */
+/*   Updated: 2024/10/04 22:39:13 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	create_child(int i, sem_t *sem)
+void	*function (void *args)
 {
+	(void)args;
 	int	pid;
 	int	wstatus;
 
 	pid = fork();
 	if (pid == 0)
 	{
-		
+		write(1, "String to print\n", ft_strlen("String to print\n"));
 	}
 	else
 	{
 		waitpid(pid, &wstatus, 0);
 	}
+	return (NULL);
+}
+
+int	create_child(int i, sem_t *sem)
+{
+	(void)i;
+	(void)sem;
+	pthread_t *thread;
+
+	thread = malloc(sizeof(pthread_t));
+	if (!thread)
+		return (-1);
+	pthread_create(thread, NULL, &function, NULL);
+	pthread_join(*thread, NULL);
+	free(thread);
+	return (0);
 }
 
 int	main(int argc, char *argv[])
