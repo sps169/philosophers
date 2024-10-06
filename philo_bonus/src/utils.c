@@ -6,11 +6,11 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 11:39:05 by sperez-s          #+#    #+#             */
-/*   Updated: 2024/10/04 21:28:02 by sperez-s         ###   ########.fr       */
+/*   Updated: 2024/10/06 11:56:09 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "philo_bonus.h"
 
 //int	time_diff(struct timeval *start, struct timeval *end)
 //{

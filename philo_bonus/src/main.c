@@ -6,63 +6,63 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 19:27:34 by sperez-s          #+#    #+#             */
-/*   Updated: 2024/10/04 22:39:13 by sperez-s         ###   ########.fr       */
+/*   Updated: 2024/10/06 18:12:18 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "philo_bonus.h"
 
-void	*function (void *args)
+int	create_semaphores (t_params *params)
 {
-	(void)args;
-	int	pid;
-	int	wstatus;
+	sem_t	*semaphore;
 
-	pid = fork();
-	if (pid == 0)
-	{
-		write(1, "String to print\n", ft_strlen("String to print\n"));
-	}
-	else
-	{
-		waitpid(pid, &wstatus, 0);
-	}
-	return (NULL);
+	if (sem_unlink("forks"))
+		return(0);
+	if (sem_unlink("pickup"));
+		return(0);
+	semaphore = sem_open("forks", O_CREAT, O_RDWR, params->n_philo);
+	if (semaphore == SEM_FAILED)
+		return (0);
+	params->forks = semaphore;
+	semaphore = sem_open("pickup", O_CREAT, O_RDWR, 1);
+	if (semaphore == SEM_FAILED)
+		return (0);
+	params->pickup = semaphore;
+	return (1);
 }
 
-int	create_child(int i, sem_t *sem)
+static int	start_philo(t_params *params)
 {
-	(void)i;
-	(void)sem;
-	pthread_t *thread;
+	t_node	*philos;
 
-	thread = malloc(sizeof(pthread_t));
-	if (!thread)
-		return (-1);
-	pthread_create(thread, NULL, &function, NULL);
-	pthread_join(*thread, NULL);
-	free(thread);
+	if (!create_semaphores(params))
+	{
+		printf("Semaphore initialization failed\n");
+		return (0);
+	}
+	philos = create_circle(params);
+	if (philos == NULL)
+	{
+		printf("List creation failed\n");
+		return (0);
+	}
+	gettimeofday(&(params->t_start), NULL);
+	wait_and_free(&philos);
 	return (0);
 }
 
 int	main(int argc, char *argv[])
 {
-	(void) argc;
-	(void) argv;
+	t_params	*params;
 	sem_t	*semaphore;
-	int		n_philo = 5;
 
-	sem_unlink("Forks");
-	semaphore = sem_open("Forks", O_CREAT, O_RDWR, n_philo);
-	if (semaphore == SEM_FAILED)
-		write(1, "Ding dong\n", 10);
-	int	i;
-	i = 0;
-	while (i < n_philo)
+	params = init_params(argc, argv);
+	if (params != NULL)
 	{
-		create_child(i + 1, semaphore);
-		i++;
+		start_philo(params);
+		clean_params(&params);
 	}
-	sem_close(semaphore);
+	else
+		printf("Wrong params\n");
 	return (0);
 }

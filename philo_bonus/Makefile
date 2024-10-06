@@ -3,6 +3,10 @@ NAME = philo_bonus
 SRC_DIR = ./src/
 
 SRC = 	$(SRC_DIR)main.c				\
+		$(SRC_DIR)philo_creation.c		\
+		$(SRC_DIR)list_handler.c		\
+		$(SRC_DIR)cleanup.c				\
+		$(SRC_DIR)init_params.c			\
 		$(SRC_DIR)utils.c				\
 
 OBJS = $(SRC:.c=.o)
