@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 15:02:53 by sperez-s          #+#    #+#             */
-/*   Updated: 2024/10/06 17:34:41 by sperez-s         ###   ########.fr       */
+/*   Updated: 2024/10/06 19:26:33 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ static t_node	*create_node(unsigned int id, t_node *next, t_params *params)
 		return (NULL);
 	}
 	node->id = id;
-	node->philo_data = create_philosopher(id, params);
+	node->philo_data = build_philosopher(id, params);
 	if (node->philo_data == NULL)
 	{
 		free(node);
