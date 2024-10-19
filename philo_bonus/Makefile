@@ -4,6 +4,9 @@ SRC_DIR = ./src/
 
 SRC = 	$(SRC_DIR)main.c				\
 		$(SRC_DIR)philo_creation.c		\
+		$(SRC_DIR)philo_behaviour.c		\
+		$(SRC_DIR)philo_time.c			\
+		$(SRC_DIR)printing.c			\
 		$(SRC_DIR)list_handler.c		\
 		$(SRC_DIR)cleanup.c				\
 		$(SRC_DIR)init_params.c			\

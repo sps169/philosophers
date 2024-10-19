@@ -6,17 +6,17 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 11:39:05 by sperez-s          #+#    #+#             */
-/*   Updated: 2024/10/06 11:56:09 by sperez-s         ###   ########.fr       */
+/*   Updated: 2024/10/19 14:17:29 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-//int	time_diff(struct timeval *start, struct timeval *end)
-//{
-//	return ((end->tv_sec * 1000 + end->tv_usec / 1000)
-//		- (start->tv_sec * 1000 + start->tv_usec / 1000));
-//}
+int	time_diff(struct timeval *start, struct timeval *end)
+{
+	return ((end->tv_sec * 1000 + end->tv_usec / 1000)
+		- (start->tv_sec * 1000 + start->tv_usec / 1000));
+}
 
 size_t	ft_strlen(char *string)
 {

@@ -6,13 +6,13 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 15:02:53 by sperez-s          #+#    #+#             */
-/*   Updated: 2024/10/06 19:26:33 by sperez-s         ###   ########.fr       */
+/*   Updated: 2024/10/19 15:54:18 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-static t_node	*create_node(unsigned int id, t_node *next, t_params *params)
+static t_node	*create_node(unsigned int id, t_node *prev, t_params *params)
 {
 	t_node	*node;
 
@@ -29,7 +29,8 @@ static t_node	*create_node(unsigned int id, t_node *next, t_params *params)
 		free(node);
 		return (NULL);
 	}
-	node->next = next;
+	if (prev)
+		prev->next = node;
 	return (node);
 }
 
