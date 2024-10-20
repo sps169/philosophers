@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 19:30:16 by sperez-s          #+#    #+#             */
-/*   Updated: 2024/10/19 15:46:33 by sperez-s         ###   ########.fr       */
+/*   Updated: 2024/10/20 13:12:21 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,8 @@ t_node	*create_circle(t_params *params);
 t_philo_data	*build_philosopher(unsigned int id, t_params *params);
 
 size_t	ft_strlen(char *string);
+
+int	init_philo_process(t_philo_data *data);
 
 //philo behaviour
 

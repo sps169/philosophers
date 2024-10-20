@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 19:27:34 by sperez-s          #+#    #+#             */
-/*   Updated: 2024/10/19 16:00:52 by sperez-s         ###   ########.fr       */
+/*   Updated: 2024/10/20 14:17:49 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,14 +45,36 @@ static int	create_semaphores (t_params *params)
 	semaphore = sem_open("/pickup", O_CREAT, O_RDWR, 1);
 	if (semaphore == SEM_FAILED)
 		return (0);
-	printf("Pickup semaphore created with value %i\n", params->n_philo);
+	printf("Pickup semaphore created with value %i\n", 1);
 	params->pickup = semaphore;
 	semaphore = sem_open("/print", O_CREAT, O_RDWR, 1);
 	if (semaphore == SEM_FAILED)
 		return (0);
-	printf("Print semaphore created with value %i\n", params->n_philo);
+	printf("Print semaphore created with value %i\n", 1);
 	params->print = semaphore;
 	return (1);
+}
+
+static int fork_philos (t_node *philos)
+{
+	int	first;
+	t_node *curr_node;
+
+	curr_node = philos;
+	first = 1;
+	while (curr_node->id != 1 || first)
+	{
+		if (curr_node->id == 1)
+			first = 0;
+		if (!init_philo_process(curr_node->philo_data))
+			return (0);
+		curr_node = curr_node->next;
+	}
+	return (1);
+}
+
+static int retreat() {
+	return (-1);
 }
 
 static int	start_philo(t_params *params)
@@ -65,13 +87,18 @@ static int	start_philo(t_params *params)
 		printf("Error: %i", errno);
 		return (0);
 	}
-	sem_wait(params->pickup);
-	gettimeofday(&(params->t_start), NULL);
 	philos = create_circle(params);
 	if (philos == NULL)
 	{
 		printf("List creation failed\n");
 		return (0);
+	}
+	sem_wait(params->pickup);
+	gettimeofday(&(params->t_start), NULL);
+	if (!fork_philos(philos))
+	{
+		retreat(); // todo
+		return (-1);
 	}
 	sem_post(params->pickup);
 	wait_and_free(&philos);

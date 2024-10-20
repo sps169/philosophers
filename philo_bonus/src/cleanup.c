@@ -6,7 +6,7 @@
 /*   By: sperez-s <sperez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 12:11:20 by sperez-s          #+#    #+#             */
-/*   Updated: 2024/10/06 18:12:23 by sperez-s         ###   ########.fr       */
+/*   Updated: 2024/10/20 13:47:04 by sperez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,11 @@ void	wait_and_free(t_node **philos)
 	int		status;
 
 	curr_node = *philos;
-	first_node = -1;
-	while (curr_node->id != 1 || first_node == -1)
+	first_node = 1;
+	while (curr_node->id != 1 || first_node)
 	{
+		if (curr_node->id == 1 && first_node)
+			first_node = 0;
 		waitpid(curr_node->philo_data->pid, &status, 0);
 		curr_node = curr_node->next;
 	}
